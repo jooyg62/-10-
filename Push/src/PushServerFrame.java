@@ -33,7 +33,7 @@ public class PushServerFrame extends JFrame {
 		c.add(text);
 		c.add(new JLabel("접속자수"));
 		c.add(clientCountLabel);
-		c.add(new JLabel("전송한 수"));
+		c.add(new JLabel("전송한수"));
 		c.add(deliveredCountLabel);
 		c.add(new JScrollPane(clientList));
 		setVisible(true);
@@ -85,8 +85,15 @@ public class PushServerFrame extends JFrame {
 					out.write(msg+"\n");
 					out.flush();
 				}
+			} catch(java.net.SocketException e) {
+				//상대 소켓이 닫힌 경우
+				threadCount--;
+				clientCountLabel.setText(Integer.toString(threadCount));
+				text.decreaseDeliveredCount();
+				return;
 			} catch (IOException e) {
 				e.printStackTrace();
+				return;
 			}
 		}
 	}
@@ -108,6 +115,10 @@ public class PushServerFrame extends JFrame {
 		
 		private void increaseDeliveredCount() {
 			deliveredCount++;
+			deliveredCountLabel.setText(Integer.toString(deliveredCount));
+		}
+		private void decreaseDeliveredCount() {
+			deliveredCount--;
 			deliveredCountLabel.setText(Integer.toString(deliveredCount));
 		}
 		
